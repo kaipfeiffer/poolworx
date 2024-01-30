@@ -1,0 +1,73 @@
+version: "3.1"
+services:
+  # die Variablen befinden sich in der .env-Datei im gleichen Verzeichnis
+  node:
+    build: 
+      context: "./docker/node/"
+      args:
+          EXPOSE_PORT: ${EXPOSE_PORT}
+    environment:
+      ENV_EXPOSE_PORT: ${EXPOSE_PORT}
+    ports: 
+      - "${EXPOSE_PORT}:${EXPOSE_PORT}"
+    volumes:
+      - ./src/vite-app:/app
+  wp:
+    # image: wordpress
+    build: ./docker/wordpress/
+    restart: always
+    ports:
+      - 8381:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: "${DB_NAME}1"
+    # volumes:
+      # - ./src/wp-content/plugins/kpm-counter:/var/www/html/wp-content/plugins/kpm-counter
+      # - ../WP-Standard/src/wp-content/plugins/kp_replace_for_privacy:/var/www/html/wp-content/plugins/kp_replace_for_privacy
+    logging:
+      options:
+        max-size: 2m
+  wp2:
+    # image: wordpress
+    build: ./docker/wordpress/
+    restart: always
+    ports:
+      - 8382:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: "${DB_NAME}2"
+    # volumes:
+      # - ./src/wp-content/plugins/kpm-counter:/var/www/html/wp-content/plugins/kpm-counter
+      # - ../WP-Standard/src/wp-content/plugins/kp_replace_for_privacy:/var/www/html/wp-content/plugins/kp_replace_for_privacy
+    logging:
+      options:
+        max-size: 2m
+
+  db:
+    # image: mysql:5.7
+    build: ./docker/mysql/
+    restart: always
+    environment:
+      APP_MYSQL_USER: ${DB_USER}
+      APP_MYSQL_PASSWORD: ${DB_PASSWORD}
+      APP_MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      # MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./db/:/var/lib/mysql
+      # - ./docker/mysql/database-setup.sql:/docker-entrypoint-initdb.d/database-setup.sql
+      - ./docker/mysql/database-setup.sh:/docker-entrypoint-initdb.d/database-setup.sh
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8389:80
+    environment:
+      - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT=128M
