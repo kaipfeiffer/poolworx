@@ -1,7 +1,7 @@
 FROM wordpress:cli
 
-# ARG WORDPRESS_DB_HOST WORDPRESS_DB_USER WORDPRESS_DB_PASSWORD WORDPRESS_DB_NAME
+ARG WP1_SLUG, WP1_TITLE, WP2_SLUG, WP2_TITLE, WP3_SLUG, WP3_TITLE, WP4_SLUG, WP4_TITLE
 
-COPY scripts/test-server.sh /tmp/test-server.sh
+COPY scripts/wp-multisite-setup.php /tmp/wp-multisite-setup.php 
 
-CMD ["sh" "-c" "/tmp/test-server.sh"]
+# CMD ["sh" "-c" "/tmp/test-server.sh"]
