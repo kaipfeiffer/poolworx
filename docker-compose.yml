@@ -3,8 +3,8 @@ networks:
   backend:
     driver: bridge
 volumes:
-  wp-volume1:
-  wp-volume2:
+  wp-vol1:
+  wp-vol2:
   # wp3-volume:
 services:
   # variables are located in .env in this directory
@@ -33,7 +33,7 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_ROOT_PASSWORD}
       WORDPRESS_DB_NAME: "${DB_NAME}2"
     volumes:
-      - wp-volume1:/var/www/html
+      - wp-vol1:/var/www/html
     logging:
       options:
         max-size: 2m
@@ -44,11 +44,11 @@ services:
 
   # wp-client for wp1 container
   wpcli1:
-    # image: wordpress:cli
-    build: ./docker/wpcli/
+    image: wordpress:cli
+    # build: ./docker/wpcli/
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
-      - wp-volume2:/var/www/html
+      - wp-vol1:/var/www/html
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: root
@@ -57,8 +57,16 @@ services:
     depends_on:
       - db
       - wp1
+    links:
+      - db
     networks:
       - backend
+    user: xfs
+    command: >
+      /bin/sh -c '
+      sleep 10;
+      wp core install --path="/var/www/html" --url="http://localhost:${WP1_PORT}" --title="${WP1_TITLE}" --admin_user=admin --admin_password=${WP_ADMIN_PASS} --admin_email=${WP_EMAIL}
+      '
 
   # standalone instance of the ride-pooling plugin
   wp2:
@@ -73,7 +81,7 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_ROOT_PASSWORD}
       WORDPRESS_DB_NAME: "${DB_NAME}2"
     volumes:
-      - wp-volume2:/var/www/html
+      - wp-vol2:/var/www/html
     logging:
       options:
         max-size: 2m
@@ -84,11 +92,11 @@ services:
 
   # wp-client for wp1 container
   wpcli2:
-    # image: wordpress:cli
-    build: ./docker/wpcli/
+    image: wordpress:cli
+    # build: ./docker/wpcli/
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
-      - wp-volume2:/var/www/html
+      - wp-vol2:/var/www/html
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: root
@@ -97,8 +105,16 @@ services:
     depends_on:
       - db
       - wp2
+    links:
+      - db
     networks:
       - backend
+    user: xfs
+    command: >
+      /bin/sh -c '
+      sleep 10;
+      wp core install --path="/var/www/html" --url="http://localhost:${WP2_PORT}" --title="${WP2_TITLE}" --admin_user=admin --admin_password=${WP_ADMIN_PASS} --admin_email=${WP_EMAIL}
+      '
 
   # mysql container for all wp containers
   db:
