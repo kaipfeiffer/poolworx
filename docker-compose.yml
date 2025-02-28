@@ -32,7 +32,7 @@ services:
       WORDPRESS_DB_NAME: "${DB_NAME}"
     volumes:
       - wordpress:/var/www/html
-      - ./ridepool:/var/www/html/wp-content/plugins/ridepool
+      - ../ridepool:/var/www/html/wp-content/plugins/ridepool
       - ${PWD}/config/.htaccess:/var/www/html/.htaccess
     logging:
       options:
@@ -47,7 +47,7 @@ services:
     volumes:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - wordpress:/var/www/html
-      - ./ridepool:/var/www/html/wp-content/plugins/ridepool
+      - ../ridepool:/var/www/html/wp-content/plugins/ridepool
       # rewrite settings for multisite
       - ${PWD}/config/.htaccess:/var/www/html/.htaccess
       # settings for the sites to create
