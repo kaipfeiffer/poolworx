@@ -33,6 +33,7 @@ services:
     volumes:
       - wordpress:/var/www/html
       - ../ridepool:/var/www/html/wp-content/plugins/ridepool
+      - ../tramp:/var/www/html/wp-content/plugins/ridepool/vendor/kaipfeiffer/tramp
       - ${PWD}/config/.htaccess:/var/www/html/.htaccess
     logging:
       options:
@@ -48,6 +49,7 @@ services:
       - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
       - wordpress:/var/www/html
       - ../ridepool:/var/www/html/wp-content/plugins/ridepool
+      - ../tramp:/var/www/html/wp-content/plugins/ridepool/vendor/kaipfeiffer/tramp
       # rewrite settings for multisite
       - ${PWD}/config/.htaccess:/var/www/html/.htaccess
       # settings for the sites to create
