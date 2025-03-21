@@ -34,7 +34,7 @@ services:
       - wordpress:/var/www/html
       - ../ridepool:/var/www/html/wp-content/plugins/ridepool
       - ../tramp:/var/www/html/wp-content/plugins/ridepool/vendor/kaipfeiffer/tramp
-      - /Volumes/ramdisk/Privat/anacoda/anacoda.php:/var/www/html/wp-content/plugins/ridepool/anacoda.php
+      - /Volumes/ramdisk/Privat/anacoda:/var/www/html/anacoda
       - ${PWD}/config/.htaccess:/var/www/html/.htaccess
     logging:
       options:
