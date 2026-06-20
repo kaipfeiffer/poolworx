@@ -1,3 +1,4 @@
 /ridepool
 .DS_Store
 /src
+.env
