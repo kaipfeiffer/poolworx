@@ -1,6 +1,21 @@
-FROM wordpress
+FROM wordpress:php7.4
 
-RUN apt-get update && apt-get upgrade -y  && apt-get install -y curl git npm unzip zip
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        msmtp \
+        msmtp-mta \
+        npm \
+        unzip \
+        zip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY msmtprc /etc/msmtprc
+COPY mailhog-sendmail.ini /usr/local/etc/php/conf.d/mailhog-sendmail.ini
+
+RUN chmod 0644 /etc/msmtprc
 
 # COPY --from=composer:2.0 /usr/bin/composer /usr/local/bin/composer
 
