@@ -4,6 +4,7 @@ networks:
     driver: bridge
 volumes:
   wordpress:
+  wordpress_update_test:
   mysql:
 services:
   # variables are located in .env in this directory
@@ -87,6 +88,32 @@ services:
       fi;
       wp --require=/tmp/wp-multisite-setup.php --url="${WP_PROTOCOL}://${WP_HOST}:${WP_PORT}" multisite install ${WP_PROTOCOL} ${WP_HOST} ${WP_PORT}
       '
+
+  # isolated wordpress instance for plugin install/update tests
+  wp-update-test:
+    image: poolworx-wordpress:php7.4-mailhog
+    restart: always
+    ports:
+      - 8390:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: ${DB_ROOT_PASSWORD}
+      WORDPRESS_DB_NAME: rideshare_update_test
+      RIDESHARE_USE_SENDMAIL: "1"
+      WORDPRESS_CONFIG_EXTRA: |
+        define('RIDESHARE_USE_SENDMAIL', true);
+    volumes:
+      - wordpress_update_test:/var/www/html
+      - ${PWD}/config/.htaccess:/var/www/html/.htaccess
+    logging:
+      options:
+        max-size: 2m
+    depends_on:
+      - db
+      - mailhog
+    networks:
+      - backend
 
   # mysql container for all wp containers
   db:
